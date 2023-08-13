@@ -1,0 +1,49 @@
+---
+- hosts: nginx
+  roles:
+    - role: nginx_setup
+      vars:
+        nginx_port: 8080
+        tls_certificate_path: /cert
+        web_directory: /srv
+
+- hosts: rootca
+  roles:
+    - role: root_ca_setup
+      vars:
+        domain: nginx.internaldns.com
+
+- hosts: all
+  tasks:
+    - name: Determine OS
+      ansible.builtin.setup:
+      register: os
+
+    - name: Display OS
+      debug:
+        var: os.ansible_distribution
+
+    - name: Determine Hostname
+      command: hostname
+      register: host_name
+
+    - name: Display Hostname
+      debug:
+        var: host_name.stdout
+
+    - name: Determine IP
+      command: hostname -I
+      register: ip_address
+
+    - name: Display IP Address
+      debug:
+        var: ip_address.stdout
+
+    - name: List installed packages
+      package_facts:
+        manager: "auto"
+      register: packages
+
+    - name: Display installed packages
+      debug:
+        var: packages.ansible_facts.packages

@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+  api2:
+    build: .
+    ports:
+      - "5001:5000"
+  api3:
+    build: .
+    ports:
+      - "5002:5000"
+      
+  haproxy:
+    image: "haproxy:2.4"
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
